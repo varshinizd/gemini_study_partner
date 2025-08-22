@@ -13,165 +13,302 @@
 
     <style>
         :root {
-         --bg: #f4f6f9;
-         --panel: #ffffff;
-         --muted: #6b7280;
-         --accent: #4a90e2;
-         --border: #e6e7ea;
-         --text: #0b1220;  /* added */
-         --bubble-shadow: 0 6px 18px rgba(20,20,30,0.04);
-       }
-       .dark {
-         --bg: #0b1220;
-         --panel: #0f1724;
-         --muted: #9aa4b2;
-         --accent: #2b7de9;
-         --border: #1f2a37;
-         --text: #e5e7eb;  /* light gray for dark mode */
-         --bubble-shadow: 0 8px 30px rgba(0,0,0,0.6);
-       }
-
-       html,body {
-         height:100%;
-         margin:0;
-         font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-         background: var(--bg);
-         color: var(--text);   /* ✅ use variable */
-       }
-
-
-               /* app center */
-               .app {
-                 height: 100vh;
-                 display:flex;
-                 align-items:center;
-                 justify-content:center;
-                 padding:20px;
-                 box-sizing:border-box;
-               }
-
-               /* main chat window */
-               .window {
-                 width:100%;
-                 max-width:980px;
-                 height:90vh;
-                 display:flex;
-                 flex-direction:column;
-                 background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
-                 border-radius:12px;
-                 overflow:hidden;
-                 border:1px solid var(--border);
-                 box-shadow: 0 10px 40px rgba(2,6,23,0.08);
-                 background-color: var(--panel);
-               }
-
-               /* header */
-               .header {
-                 display:flex;
-                 align-items:center;
-                 justify-content:space-between;
-                 padding:14px 18px;
-                 border-bottom:1px solid var(--border);
-                 gap:12px;
-                 background:transparent;
-               }
-               .title { display:flex; gap:12px; align-items:center; font-weight:600; font-size:16px; color:var(--muted); }
-               .logo {
-                 width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent), #3578d8);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;
-                 box-shadow: var(--bubble-shadow);
-               }
-               .controls { display:flex; gap:8px; align-items:center; }
-
-               /* dark toggle */
-               .toggle {
-                 display:inline-flex; align-items:center; gap:8px; padding:8px;border-radius:8px; cursor:pointer; border:1px solid var(--border); background:transparent;
-                 color:var(--muted); font-size:13px;
-               }
-
-               /* chat area */
-               #chat {
-                 flex:1;
-                 overflow:auto;
-                 padding:20px;
-                 display:flex;
-                 flex-direction:column;
-                 gap:12px;
-                 scroll-behavior:smooth;
-                 background:transparent;
-               }
-
-               /* message row wrappers */
-               .msg-row { display:flex; gap:10px; align-items:flex-end; max-width:100%; }
-               .msg-row.bot { align-self:flex-start; }
-               .msg-row.user { align-self:flex-end; flex-direction:row-reverse; }
-
-               /* avatar */
-               .avatar {
-                 width:36px; height:36px; flex:0 0 36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700;
-                 color:white; background:#9aa4b2; font-size:13px;
-               }
-               .avatar.bot { background: linear-gradient(135deg,var(--accent), #3578d8); box-shadow: var(--bubble-shadow); }
-               .avatar.user { background: #4a90e2; }
-
-               /* message bubble */
-               .bubble {
-                 padding:12px 14px;
-                 border-radius:12px;
-                 max-width:78%;
-                 font-size:15px;
-                 line-height:1.5;
-                 border:1px solid var(--border);
-                 background:var(--panel);
-                 box-shadow: var(--bubble-shadow);
-                 color:inherit;
-                 white-space:pre-wrap;
-                 word-break:break-word;
-               }
-               .msg-row.user .bubble { background: linear-gradient(180deg,#3f84d8,#3a78c2); color:#fff; border: none; }
-
-               /* markdown styles inside bubble */
-               .bubble p { margin:0 0 8px 0; }
-               .bubble code { background: #f6f6f6; padding:2px 6px; border-radius:6px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:13px; }
-               .dark .bubble code { background:#0b1220; }
-               .bubble pre { background:#f6f6f6; padding:12px; border-radius:8px; overflow:auto; margin:8px 0; border:1px solid var(--border); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:13px; }
-               .dark .bubble pre { background:#07101a; border-color: #173041; }
-               .bubble blockquote { border-left:3px solid #e5e7eb; padding-left:10px; color:var(--muted); margin:0 0 8px 0; }
-               .bubble ul, .bubble ol { margin:0 0 8px 18px; padding:0; }
-               .bubble strong{ font-weight:600; }
-
-               /* code header (for copy button) */
-               .code-wrap { position:relative; }
-               .copy-btn {
-                 position:absolute; right:8px; top:8px; background:rgba(0,0,0,0.06); border:none; padding:6px 8px; border-radius:6px; cursor:pointer; font-size:13px;
-               }
-               .dark .copy-btn { background: rgba(255,255,255,0.04); color:var(--muted); }
-
-               /* typing indicator */
-               .typing {
-                 display:inline-flex; gap:6px; padding:10px 14px; border-radius:12px; align-items:center; border:1px solid var(--border); background:var(--panel);
-                 box-shadow: var(--bubble-shadow);
-               }
-               .dot { width:7px; height:7px; border-radius:50%; background:#9aa4b2; opacity:0.3; animation:blink 1.1s infinite; }
-               .dot:nth-child(2){ animation-delay:0.12s; }
-               .dot:nth-child(3){ animation-delay:0.24s; }
-               @keyframes blink { 0%{opacity:.15} 30%{opacity:1} 100%{opacity:.15} }
-
-               /* input area */
-               .input-area { display:flex; gap:8px; padding:14px; border-top:1px solid var(--border); align-items:flex-end; background:transparent; }
-               textarea#input { resize:none; min-height:44px; max-height:160px; padding:12px; border-radius:10px; border:1px solid var(--border); width:100%; font-size:14px; outline:none; background:transparent; color:inherit; }
-               .send-btn { background:var(--accent); color:white; border:none; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600; }
-               .send-btn:disabled{ opacity:0.5; cursor:not-allowed; }
-               .hint { font-size:13px; color:var(--muted); margin-left:6px; }
-
-               /* timestamp small */
-               .meta { font-size:11px; color:var(--muted); margin-top:6px; display:flex; gap:8px; align-items:center; }
-
-               /* responsiveness */
-               @media (max-width:560px){
-                 .window{ height:100vh; border-radius:0; }
-                 .bubble{ max-width:85%; }
-                 .avatar{display:none;}
-               }
+            --bg: #f4f6f9;
+            --panel: #ffffff;
+            --muted: #6b7280;
+            --accent: #4a90e2;
+            --border: #e6e7ea;
+            --text: #0b1220;
+            --bubble-shadow: 0 6px 18px rgba(20,20,30,0.04);
+        }
+        .dark {
+            --bg: #0b1220;
+            --panel: #0f1724;
+            --muted: #9aa4b2;
+            --accent: #2b7de9;
+            --border: #1f2a37;
+            --text: #e5e7eb;
+            --bubble-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: var(--bg);
+            color: var(--text);
+        }
+        .app {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .window {
+            width: 100%;
+            max-width: 980px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(2,6,23,0.08);
+            background-color: var(--panel);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+            background: transparent;
+        }
+        .title {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--muted);
+        }
+        .logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), #3578d8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: var(--bubble-shadow);
+        }
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        #chat {
+            flex: 1;
+            overflow: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scroll-behavior: smooth;
+            background: transparent;
+        }
+        .msg-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            max-width: 100%;
+        }
+        .msg-row.bot {
+            align-self: flex-start;
+        }
+        .msg-row.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .avatar {
+            width: 36px;
+            height: 36px;
+            flex: 0 0 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            background: #9aa4b2;
+            font-size: 13px;
+        }
+        .avatar.bot {
+            background: linear-gradient(135deg, var(--accent), #3578d8);
+            box-shadow: var(--bubble-shadow);
+        }
+        .avatar.user {
+            background: #4a90e2;
+        }
+        .bubble {
+            padding: 12px 14px;
+            border-radius: 12px;
+            max-width: 78%;
+            font-size: 15px;
+            line-height: 1.5;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            box-shadow: var(--bubble-shadow);
+            color: inherit;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .msg-row.user .bubble {
+            background: linear-gradient(180deg, #3f84d8, #3a78c2);
+            color: #fff;
+            border: none;
+        }
+        .bubble p {
+            margin: 0 0 8px 0;
+        }
+        .bubble code {
+            background: #f6f6f6;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+            font-size: 13px;
+        }
+        .dark .bubble code {
+            background: #0b1220;
+        }
+        .bubble pre {
+            background: #f6f6f6;
+            padding: 12px;
+            border-radius: 8px;
+            overflow: auto;
+            margin: 8px 0;
+            border: 1px solid var(--border);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+            font-size: 13px;
+        }
+        .dark .bubble pre {
+            background: #07101a;
+            border-color: #173041;
+        }
+        .bubble blockquote {
+            border-left: 3px solid #e5e7eb;
+            padding-left: 10px;
+            color: var(--muted);
+            margin: 0 0 8px 0;
+        }
+        .bubble ul, .bubble ol {
+            margin: 0 0 8px 18px;
+            padding: 0;
+        }
+        .bubble strong {
+            font-weight: 600;
+        }
+        .code-wrap {
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            background: rgba(0,0,0,0.06);
+            border: none;
+            padding: 6px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .dark .copy-btn {
+            background: rgba(255,255,255,0.04);
+            color: var(--muted);
+        }
+        .typing {
+            display: inline-flex;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            align-items: center;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            box-shadow: var(--bubble-shadow);
+        }
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #9aa4b2;
+            opacity: 0.3;
+            animation: blink 1.1s infinite;
+        }
+        .dot:nth-child(2) {
+            animation-delay: 0.12s;
+        }
+        .dot:nth-child(3) {
+            animation-delay: 0.24s;
+        }
+        @keyframes blink {
+            0% { opacity: .15; }
+            30% { opacity: 1; }
+            100% { opacity: .15; }
+        }
+        .input-area {
+            display: flex;
+            gap: 8px;
+            padding: 14px;
+            border-top: 1px solid var(--border);
+            align-items: flex-end;
+            background: transparent;
+        }
+        textarea#input {
+            resize: none;
+            min-height: 44px;
+            max-height: 160px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            width: 100%;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+            color: inherit;
+        }
+        .send-btn, .upload-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .send-btn:disabled, .upload-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .hint {
+            font-size: 13px;
+            color: var(--muted);
+            margin-left: 6px;
+        }
+        .status {
+            font-size: 13px;
+            color: var(--muted);
+            margin-left: 10px;
+        }
+        @media (max-width: 560px) {
+            .window {
+                height: 100vh;
+                border-radius: 0;
+            }
+            .bubble {
+                max-width: 85%;
+            }
+            .avatar {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -182,10 +319,9 @@
                 <div class="logo">G</div>
                 <div>
                     <div style="font-size:15px;color:var(--muted)">Gemini Chatbot Demo</div>
-                    <div style="font-size:12px;color:var(--muted)">Ask Questions</div>
+                    <div style="font-size:12px;color:var(--muted)">Ask questions about the PDF</div>
                 </div>
             </div>
-
             <div class="controls">
                 <div id="themeToggle" class="toggle" title="Toggle dark / light">🌙 Dark</div>
             </div>
@@ -194,173 +330,207 @@
         <div id="chat" aria-live="polite"></div>
 
         <div class="input-area">
-            <textarea id="input" placeholder="Type your message — press Enter to send (Shift+Enter for newline)"></textarea>
-            <div style="display:flex;flex-direction:column;gap:8px;">
-                <button id="send" class="send-btn">Send</button>
-                <div class="hint">Press Enter to send</div>
+            <div style="width: 100%;">
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 10px;">
+                    <button id="uploadBtn" class="upload-btn">Upload PDF</button>
+                    <span id="uploadStatus" class="status"></span>
+                </div>
+                <textarea id="input" placeholder="Type your question about the PDF — press Enter to send (Shift+Enter for newline)" disabled></textarea>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="send" class="send-btn" disabled>Send</button>
+                <div class="hint">Upload PDF first, then press Enter to send</div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // init
+    // Initialize elements
     const chat = document.getElementById('chat');
     const input = document.getElementById('input');
     const sendBtn = document.getElementById('send');
     const themeToggle = document.getElementById('themeToggle');
-    const appWindow = document.getElementById('appWindow');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadStatus = document.getElementById('uploadStatus');
     let dark = false;
+    let pdfUploaded = false;
 
-    // helpers
-    function el(tag, cls){ const d=document.createElement(tag); if(cls) d.className=cls; return d; }
-
-    function formatTime(date=new Date()){
-      return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    // Helpers
+    function el(tag, cls) {
+        const d = document.createElement(tag);
+        if (cls) d.className = cls;
+        return d;
     }
 
-    // append message
-    function appendMessage(role, text, opts={renderMarkdown:true, timestamp:true}){
-      const row = el('div','msg-row ' + (role==='user'?'user':'bot'));
-      const avatar = el('div','avatar ' + (role==='user'?'user':'bot'));
-      avatar.textContent = role==='user'? 'You' : 'G';
-      const bubble = el('div','bubble');
-
-      // render markdown or plain
-      if(opts.renderMarkdown) {
-        // use marked for markdown -> HTML
-        bubble.innerHTML = marked.parse(text || '');
-        // highlight code blocks
-        requestAnimationFrame(() => { hljs.highlightAll(); addCopyButtons(bubble); });
-      } else {
-        bubble.textContent = text;
-      }
-
-      row.appendChild(avatar);
-      row.appendChild(bubble);
-
-      // timestamp / meta
-      if(opts.timestamp){
-        const meta = el('div','meta');
-        meta.textContent = formatTime();
-        bubble.appendChild(meta);
-      }
-
-      chat.appendChild(row);
-      chat.scrollTop = chat.scrollHeight;
+    function formatTime(date = new Date()) {
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
-    // Add copy buttons to <pre> blocks inside a container
-    function addCopyButtons(container){
-      const pres = container.querySelectorAll('pre');
-      pres.forEach(pre => {
-        // avoid duplicate buttons
-        if(pre.parentElement.classList.contains('code-wrap')) return;
-        const wrap = el('div','code-wrap');
-        pre.parentNode.replaceChild(wrap, pre);
-        wrap.appendChild(pre);
-        const btn = el('button','copy-btn');
-        btn.textContent = 'Copy';
-        btn.title = 'Copy code';
-        btn.addEventListener('click', async () => {
-          try {
-            await navigator.clipboard.writeText(pre.innerText);
-            btn.textContent = 'Copied';
-            setTimeout(()=> btn.textContent = 'Copy', 1200);
-          } catch(e) {
-            btn.textContent = 'Failed';
-            setTimeout(()=> btn.textContent = 'Copy', 1200);
-          }
-        });
-        wrap.appendChild(btn);
-      });
-    }
+    // Append message
+    function appendMessage(role, text, opts = { renderMarkdown: true, timestamp: true }) {
+        const row = el('div', 'msg-row ' + (role === 'user' ? 'user' : 'bot'));
+        const avatar = el('div', 'avatar ' + (role === 'user' ? 'user' : 'bot'));
+        avatar.textContent = role === 'user' ? 'You' : 'G';
+        const bubble = el('div', 'bubble');
 
-    // typing indicator
-    let typingNode = null;
-    function showTyping(){
-      typingNode = el('div','msg-row bot');
-      const avatar = el('div','avatar bot');
-      avatar.textContent = 'G';
-      const typingBubble = el('div','typing');
-      typingBubble.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
-      typingNode.appendChild(avatar);
-      typingNode.appendChild(typingBubble);
-      chat.appendChild(typingNode);
-      chat.scrollTop = chat.scrollHeight;
-    }
-    function removeTyping(){
-      if(typingNode && typingNode.parentNode) typingNode.parentNode.removeChild(typingNode);
-      typingNode = null;
-    }
-
-    // send logic (tries POST to /chat?message=..., falls back to canned reply)
-    async function sendMessage(){
-      const message = input.value.trim();
-      if(!message) return;
-      appendMessage('user', message, {renderMarkdown:false});
-      input.value = '';
-      sendBtn.disabled = true;
-
-      showTyping();
-      try {
-        // NOTE: matches earlier examples that used POST with query param
-        const res = await fetch('/chat?message=' + encodeURIComponent(message), { method: 'POST' });
-        if(res.ok){
-          const text = await res.text();
-          removeTyping();
-          appendMessage('bot', text || '...', {renderMarkdown:true});
+        if (opts.renderMarkdown) {
+            bubble.innerHTML = marked.parse(text || '');
+            requestAnimationFrame(() => { hljs.highlightAll(); addCopyButtons(bubble); });
         } else {
-          // fallback: try to fetch JSON (optional) or show sample
-          removeTyping();
-          appendMessage('bot', `Sorry, server returned ${res.status}. Example reply:\n\n**Echo:** ${message}`, {renderMarkdown:true});
+            bubble.textContent = text;
         }
-      } catch(err) {
-        // network/server error -> fallback example reply so UI still useful
-        removeTyping();
-        appendMessage('bot', `I couldn't reach the server — here's a quick sample reply rendered as Markdown:\n\n- You said: **${escapeHtml(message)}**\n- Try checking your server endpoint at \`/chat\`.\n\n\`\`\`js\n// Example fallback code snippet\nconsole.log("This is a sample response");\n\`\`\`\n`, {renderMarkdown:true});
-      } finally {
-        sendBtn.disabled = false;
+
+        row.appendChild(avatar);
+        row.appendChild(bubble);
+
+        if (opts.timestamp) {
+            const meta = el('div', 'meta');
+            meta.textContent = formatTime();
+            bubble.appendChild(meta);
+        }
+
+        chat.appendChild(row);
         chat.scrollTop = chat.scrollHeight;
-      }
     }
 
-    // escape helper for fallback
-    function escapeHtml(s){ return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
+    // Add copy buttons to <pre> blocks
+    function addCopyButtons(container) {
+        const pres = container.querySelectorAll('pre');
+        pres.forEach(pre => {
+            if (pre.parentElement.classList.contains('code-wrap')) return;
+            const wrap = el('div', 'code-wrap');
+            pre.parentNode.replaceChild(wrap, pre);
+            wrap.appendChild(pre);
+            const btn = el('button', 'copy-btn');
+            btn.textContent = 'Copy';
+            btn.title = 'Copy code';
+            btn.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(pre.innerText);
+                    btn.textContent = 'Copied';
+                    setTimeout(() => btn.textContent = 'Copy', 1200);
+                } catch (e) {
+                    btn.textContent = 'Failed';
+                    setTimeout(() => btn.textContent = 'Copy', 1200);
+                }
+            });
+            wrap.appendChild(btn);
+        });
+    }
 
-    // input: Enter to send, Shift+Enter newline
+    // Typing indicator
+    let typingNode = null;
+    function showTyping() {
+        typingNode = el('div', 'msg-row bot');
+        const avatar = el('div', 'avatar bot');
+        avatar.textContent = 'G';
+        const typingBubble = el('div', 'typing');
+        typingBubble.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+        typingNode.appendChild(avatar);
+        typingNode.appendChild(typingBubble);
+        chat.appendChild(typingNode);
+        chat.scrollTop = chat.scrollHeight;
+    }
+    function removeTyping() {
+        if (typingNode && typingNode.parentNode) typingNode.parentNode.removeChild(typingNode);
+        typingNode = null;
+    }
+
+    // Upload PDF from local path
+    async function uploadPdf() {
+        uploadBtn.disabled = true;
+        uploadStatus.textContent = 'Uploading...';
+
+        try {
+            const res = await fetch('/chat/upload-pdf', { method: 'POST' });
+            if (res.ok) {
+                const text = await res.text();
+                uploadStatus.textContent = 'PDF uploaded successfully!';
+                appendMessage('bot', text, { renderMarkdown: false });
+                pdfUploaded = true;
+                input.disabled = false;
+                sendBtn.disabled = false;
+            } else {
+                uploadStatus.textContent = 'Upload failed.';
+                appendMessage('bot', `Failed to upload PDF: ${res.status}`, { renderMarkdown: false });
+            }
+        } catch (err) {
+            uploadStatus.textContent = 'Upload error.';
+            appendMessage('bot', `Error uploading PDF: ${err.message}`, { renderMarkdown: false });
+        } finally {
+            uploadBtn.disabled = false;
+        }
+    }
+
+    // Send prompt for PDF content
+    async function sendMessage() {
+        if (!pdfUploaded) {
+            appendMessage('bot', 'Please upload the PDF first.', { renderMarkdown: false });
+            return;
+        }
+        const message = input.value.trim();
+        if (!message) return;
+        // Append instruction to the message
+        const fullPrompt = message + " Only answer if the information is in the provided pdf otherwise, say couldn't find relevant information. If they say Hi, Hello or any random things that feel distracting from studying also say Let's study. Never say anything random from the pdf if you don't find anything relevant. Never say I will follow the instructions or something like that. If they say Ok or Okay ask them to pick a topic to study (list topics from the pdf)";
+        appendMessage('user', message, { renderMarkdown: false }); // Display only the original message in the UI
+        input.value = '';
+        sendBtn.disabled = true;
+
+        showTyping();
+        try {
+            const res = await fetch('/chat/pdf-content?prompt=' + encodeURIComponent(fullPrompt), { method: 'POST' });
+            if (res.ok) {
+                const text = await res.text();
+                removeTyping();
+                appendMessage('bot', text || '...', { renderMarkdown: true });
+            } else {
+                removeTyping();
+                appendMessage('bot', `Error: ${res.status}. Please ensure the PDF is uploaded.`, { renderMarkdown: true });
+            }
+        } catch (err) {
+            removeTyping();
+            appendMessage('bot', `Error: ${err.message}. Try uploading the PDF again.`, { renderMarkdown: true });
+        } finally {
+            sendBtn.disabled = false;
+            chat.scrollTop = chat.scrollHeight;
+        }
+    }
+
+    // Event listeners
+    uploadBtn.addEventListener('click', uploadPdf);
     input.addEventListener('keydown', (e) => {
-      if(e.key === 'Enter' && !e.shiftKey){
-        e.preventDefault();
-        sendMessage();
-      }
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
     });
     sendBtn.addEventListener('click', sendMessage);
 
-    // auto-resize textarea
-    function autosize(elm){
-      elm.style.height = 'auto';
-      elm.style.height = Math.min(elm.scrollHeight, 160) + 'px';
+    // Auto-resize textarea
+    function autosize(elm) {
+        elm.style.height = 'auto';
+        elm.style.height = Math.min(elm.scrollHeight, 160) + 'px';
     }
-    input.addEventListener('input', ()=> autosize(input));
+    input.addEventListener('input', () => autosize(input));
     autosize(input);
 
-    // theme toggle
+    // Theme toggle
     themeToggle.addEventListener('click', () => {
-      dark = !dark;
-      if(dark){
-        document.documentElement.classList.add('dark');
-        themeToggle.textContent = '☀️ Light';
-      } else {
-        document.documentElement.classList.remove('dark');
-        themeToggle.textContent = '🌙 Dark';
-      }
+        dark = !dark;
+        if (dark) {
+            document.documentElement.classList.add('dark');
+            themeToggle.textContent = '☀️ Light';
+        } else {
+            document.documentElement.classList.remove('dark');
+            themeToggle.textContent = '🌙 Dark';
+        }
     });
 
-    // initial welcome message
-    appendMessage('bot', `Hello! I am your chatbot.\n\nYou can write Markdown here — **bold**, *italic*, lists, and code blocks will render nicely. Try pasting code and press *Send*.\n\nExample:\n\n- Use \`Shift+Enter\` for new line\n- Use \`Enter\` to send\n`, {renderMarkdown:true});
+    // Initial welcome message
+    appendMessage('bot', `Hello! Click "Upload PDF" to load the PDF from the server, then ask questions about it.\n\n- Type your question and press *Enter* to send.\n- Use *Shift+Enter* for a new line.`, { renderMarkdown: true });
 
-    // small accessibility: keep focus in input
+    // Keep focus in input
     input.focus();
 </script>
 </body>
