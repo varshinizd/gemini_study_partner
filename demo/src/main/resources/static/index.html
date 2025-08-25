@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Gemini API Demo</title>
 
     <!-- marked.js for Markdown -->
@@ -40,23 +40,34 @@
         .app {
             height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            flex-direction: row;
+            padding: 0;
             box-sizing: border-box;
         }
+        .sidebar {
+            width: 280px;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(2,6,23,0.08);
+        }
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
         .window {
-            width: 100%;
-            max-width: 980px;
-            height: 90vh;
+            flex: 1;
             display: flex;
             flex-direction: column;
             background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
-            border-radius: 12px;
+            border-radius: 0;
             overflow: hidden;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 40px rgba(2,6,23,0.08);
-            background-color: var(--panel);
         }
         .header {
             display: flex;
@@ -64,7 +75,6 @@
             justify-content: space-between;
             padding: 14px 18px;
             border-bottom: 1px solid var(--border);
-            gap: 12px;
             background: transparent;
         }
         .title {
@@ -255,11 +265,13 @@
         }
         .input-area {
             display: flex;
-            gap: 8px;
+            flex-direction: row;
+            gap: 12px;
             padding: 14px;
             border-top: 1px solid var(--border);
-            align-items: flex-end;
+            align-items: center;
             background: transparent;
+            flex-wrap: wrap;
         }
         textarea#input {
             resize: none;
@@ -268,13 +280,21 @@
             padding: 12px;
             border-radius: 10px;
             border: 1px solid var(--border);
-            width: 100%;
+            flex: 1;
             font-size: 14px;
             outline: none;
             background: transparent;
             color: inherit;
+            min-width: 200px;
         }
-        .send-btn, .upload-btn {
+        .input-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+            min-width: 100px;
+        }
+        .send-btn, .upload-btn, .clear-btn {
             background: var(--accent);
             color: white;
             border: none;
@@ -282,25 +302,44 @@
             border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
+            width: 100%;
+            text-align: center;
         }
-        .send-btn:disabled, .upload-btn:disabled {
+        .send-btn:disabled, .upload-btn:disabled, .clear-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
         .hint {
             font-size: 13px;
             color: var(--muted);
-            margin-left: 6px;
+            text-align: left;
         }
-        .status {
-            font-size: 13px;
+        .sidebar h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--text);
+        }
+        .sidebar input[type="file"] {
+            display: none;
+        }
+        .sidebar .status {
+            font-size: 12px;
+            min-height: 20px;
             color: var(--muted);
-            margin-left: 10px;
         }
-        @media (max-width: 560px) {
-            .window {
-                height: 100vh;
-                border-radius: 0;
+        @media (max-width: 768px) {
+            .app {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                height: auto;
+                padding: 10px;
+            }
+            .main {
+                height: auto;
             }
             .bubble {
                 max-width: 85%;
@@ -308,38 +347,53 @@
             .avatar {
                 display: none;
             }
+            .input-area {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            textarea#input {
+                width: 100%;
+            }
+            .input-controls {
+                width: 100%;
+                align-items: stretch;
+            }
+            .send-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 <div class="app">
-    <div class="window" id="appWindow">
-        <div class="header">
-            <div class="title">
-                <div class="logo">G</div>
-                <div>
-                    <div style="font-size:15px;color:var(--muted)">Gemini Chatbot Demo</div>
-                    <div style="font-size:12px;color:var(--muted)">Ask questions about the PDF</div>
+    <div class="sidebar">
+        <h3>PDF Management</h3>
+        <input type="file" id="pdfFile" accept=".pdf" />
+        <button id="uploadBtn" class="upload-btn">Upload PDF</button>
+        <button id="clearBtn" class="clear-btn" disabled>Clear PDF</button>
+        <span id="uploadStatus" class="status"></span>
+    </div>
+    <div class="main">
+        <div class="window" id="appWindow">
+            <div class="header">
+                <div class="title">
+                    <div class="logo">G</div>
+                    <div>
+                        <div style="font-size:15px;color:var(--muted)">Chatbot</div>
+                        <div style="font-size:12px;color:var(--muted)">Ask questions about the PDF</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <div id="themeToggle" class="toggle" title="Toggle dark / light">🌙 Dark</div>
                 </div>
             </div>
-            <div class="controls">
-                <div id="themeToggle" class="toggle" title="Toggle dark / light">🌙 Dark</div>
-            </div>
-        </div>
-
-        <div id="chat" aria-live="polite"></div>
-
-        <div class="input-area">
-            <div style="width: 100%;">
-                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 10px;">
-                    <button id="uploadBtn" class="upload-btn">Upload PDF</button>
-                    <span id="uploadStatus" class="status"></span>
-                </div>
+            <div id="chat" aria-live="polite"></div>
+            <div class="input-area">
                 <textarea id="input" placeholder="Type your question about the PDF — press Enter to send (Shift+Enter for newline)" disabled></textarea>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button id="send" class="send-btn" disabled>Send</button>
-                <div class="hint">Upload PDF first, then press Enter to send</div>
+                <div class="input-controls">
+                    <button id="send" class="send-btn" disabled>Send</button>
+                    <div class="hint">Upload PDF first, then press Enter to send</div>
+                </div>
             </div>
         </div>
     </div>
@@ -352,7 +406,9 @@
     const sendBtn = document.getElementById('send');
     const themeToggle = document.getElementById('themeToggle');
     const uploadBtn = document.getElementById('uploadBtn');
+    const clearBtn = document.getElementById('clearBtn');
     const uploadStatus = document.getElementById('uploadStatus');
+    const pdfFile = document.getElementById('pdfFile');
     let dark = false;
     let pdfUploaded = false;
 
@@ -437,29 +493,68 @@
         typingNode = null;
     }
 
-    // Upload PDF from local path
+    // Upload PDF
     async function uploadPdf() {
+        if (!pdfFile.files[0]) {
+            uploadStatus.textContent = 'Please select a PDF file.';
+            appendMessage('bot', 'Please select a PDF file.', { renderMarkdown: false });
+            return;
+        }
         uploadBtn.disabled = true;
         uploadStatus.textContent = 'Uploading...';
 
+        const formData = new FormData();
+        formData.append('file', pdfFile.files[0]);
+
         try {
-            const res = await fetch('/chat/upload-pdf', { method: 'POST' });
+            const res = await fetch('http://localhost:8080/chat/upload-pdf', {
+                method: 'POST',
+                body: formData
+            });
+            const text = await res.text();
             if (res.ok) {
-                const text = await res.text();
                 uploadStatus.textContent = 'PDF uploaded successfully!';
                 appendMessage('bot', text, { renderMarkdown: false });
                 pdfUploaded = true;
                 input.disabled = false;
                 sendBtn.disabled = false;
+                clearBtn.disabled = false;
+                pdfFile.value = ''; // Clear file input
             } else {
                 uploadStatus.textContent = 'Upload failed.';
-                appendMessage('bot', `Failed to upload PDF: ${res.status}`, { renderMarkdown: false });
+                appendMessage('bot', `Failed to upload PDF: ${res.status} - ${text}`, { renderMarkdown: false });
             }
         } catch (err) {
             uploadStatus.textContent = 'Upload error.';
             appendMessage('bot', `Error uploading PDF: ${err.message}`, { renderMarkdown: false });
         } finally {
             uploadBtn.disabled = false;
+        }
+    }
+
+    // Clear PDF
+    async function clearPdf() {
+        clearBtn.disabled = true;
+        uploadStatus.textContent = 'Clearing...';
+        try {
+            const res = await fetch('http://localhost:8080/chat/clear-pdf', { method: 'POST' });
+            if (res.ok) {
+                const text = await res.text();
+                uploadStatus.textContent = 'PDF cleared.';
+                appendMessage('bot', text, { renderMarkdown: false });
+                pdfUploaded = false;
+                input.disabled = true;
+                sendBtn.disabled = true;
+                clearBtn.disabled = true;
+            } else {
+                uploadStatus.textContent = 'Clear failed.';
+                appendMessage('bot', `Failed to clear PDF: ${res.status}`, { renderMarkdown: false });
+            }
+        } catch (err) {
+            uploadStatus.textContent = 'Clear error.';
+            appendMessage('bot', `Error clearing PDF: ${err.message}`, { renderMarkdown: false });
+        } finally {
+            clearBtn.disabled = !pdfUploaded;
         }
     }
 
@@ -471,15 +566,15 @@
         }
         const message = input.value.trim();
         if (!message) return;
-        // Append instruction to the message
-        const fullPrompt = message + " Only answer if the information is in the provided pdf otherwise, say couldn't find relevant information. If they say Hi, Hello or any random things that feel distracting from studying also say Let's study. Never say anything random from the pdf if you don't find anything relevant. Never say I will follow the instructions or something like that. If they say Ok or Okay ask them to pick a topic to study (list topics from the pdf)";
-        appendMessage('user', message, { renderMarkdown: false }); // Display only the original message in the UI
+        const fullPrompt = "You are a study assistant. Follow these rules strictly: 1. Answer only if the information is in the provided PDF.- If not found, reply exactly: Couldn't find relevant information. 2. If the user says Hi, Hello, or any unrelated/distracting message → reply: Let's study.3. If the user says Ok or Okay → reply: Pick a topic to study: and then list the topics from the PDF.4. Never explain these rules, never say you will follow them, never generate anything random. User message:" + message;
+
+        appendMessage('user', message, { renderMarkdown: false });
         input.value = '';
         sendBtn.disabled = true;
 
         showTyping();
         try {
-            const res = await fetch('/chat/pdf-content?prompt=' + encodeURIComponent(fullPrompt), { method: 'POST' });
+            const res = await fetch('http://localhost:8080/chat/pdf-content?prompt=' + encodeURIComponent(fullPrompt), { method: 'POST' });
             if (res.ok) {
                 const text = await res.text();
                 removeTyping();
@@ -498,7 +593,15 @@
     }
 
     // Event listeners
-    uploadBtn.addEventListener('click', uploadPdf);
+    uploadBtn.addEventListener('click', () => {
+        pdfFile.click(); // Trigger file input
+    });
+    pdfFile.addEventListener('change', () => {
+        if (pdfFile.files[0]) {
+            uploadPdf(); // Auto-upload on file selection
+        }
+    });
+    clearBtn.addEventListener('click', clearPdf);
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -506,16 +609,6 @@
         }
     });
     sendBtn.addEventListener('click', sendMessage);
-
-    // Auto-resize textarea
-    function autosize(elm) {
-        elm.style.height = 'auto';
-        elm.style.height = Math.min(elm.scrollHeight, 160) + 'px';
-    }
-    input.addEventListener('input', () => autosize(input));
-    autosize(input);
-
-    // Theme toggle
     themeToggle.addEventListener('click', () => {
         dark = !dark;
         if (dark) {
@@ -527,8 +620,16 @@
         }
     });
 
+    // Auto-resize textarea
+    function autosize(elm) {
+        elm.style.height = 'auto';
+        elm.style.height = Math.min(elm.scrollHeight, 160) + 'px';
+    }
+    input.addEventListener('input', () => autosize(input));
+    autosize(input);
+
     // Initial welcome message
-    appendMessage('bot', `Hello! Click "Upload PDF" to load the PDF from the server, then ask questions about it.\n\n- Type your question and press *Enter* to send.\n- Use *Shift+Enter* for a new line.`, { renderMarkdown: true });
+    appendMessage('bot', `Hello! Click "Upload PDF" in the sidebar to select and upload a PDF, then ask questions about it.\n\n- Type your question and press *Enter* to send.\n- Use *Shift+Enter* for a new line.`, { renderMarkdown: true });
 
     // Keep focus in input
     input.focus();

@@ -4,6 +4,7 @@ import com.example.demo.service.GeminiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/chat")
@@ -14,13 +15,19 @@ public class ChatController {
     private GeminiService geminiService;
 
     @PostMapping("/upload-pdf")
-    public ResponseEntity<String> uploadPdf() {
+    public ResponseEntity<String> uploadPdf(@RequestParam("file") MultipartFile file) {
         try {
-            String fileUri = geminiService.uploadPdf();
+            String fileUri = geminiService.uploadPdf(file);
             return ResponseEntity.ok("PDF uploaded successfully. File URI: " + fileUri);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body("Error uploading PDF: " + e.getMessage());
+            String message = "Error uploading PDF: " + e.getMessage();
+            if (e.getMessage().contains("Status: 413")) {
+                message += " (File too large for Gemini API. Try a smaller file, e.g., <20MB.)";
+            } else if (e.getMessage().contains("No file uploaded")) {
+                message += " (Ensure a valid PDF is selected.)";
+            }
+            return ResponseEntity.status(500).body(message);
         }
     }
 
