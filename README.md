@@ -30,13 +30,6 @@ API: Gemini API Endpoint
 
 Architecture: Retrieval-Augmented Generation (RAG)
 
-📂 Project Structure
-├── backend/            # Spring Boot services & API integration
-├── frontend/           # JSP/HTML/CSS/JS interface
-├── uploads/            # User-uploaded notes
-├── prompt_pipeline/    # Custom prompts for distraction handling
-└── README.md           # Project documentation
-
 🔧 How It Works
 
 Upload Notes: User uploads subject-specific files.
@@ -68,7 +61,7 @@ Run the backend (Spring Boot):
 ./mvn spring-boot:run
 
 
-Launch the frontend (JSP/HTML).
+Launch the frontend (HTML).
 
 Upload notes and start chatting!
 
